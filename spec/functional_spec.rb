@@ -97,4 +97,9 @@ describe 'lisp' do
     expect(evaluate(parse('(symbol? (quote a))'))).to eq(true)
     expect(evaluate(parse('(null? (list))'))).to eq(true)
   end
+
+  it 'can load files' do
+    evaluate(parse('(load spec/test.lisp)'))
+    expect(evaluate(parse('(factorial 3)'))).to eq(6)
+  end
 end

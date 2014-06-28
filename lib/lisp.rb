@@ -43,7 +43,8 @@ end
 
 def evaluate(x, env = @@global_env)
   if x.is_a?(Symbol)
-    env.find(x)[x]
+    e = env.find(x)
+    e ? e[x] : raise("unknown variable #{x}")
   elsif !x.is_a?(Array)
     x
   elsif x.first == :quote
@@ -69,6 +70,10 @@ def evaluate(x, env = @@global_env)
       val = evaluate(exp, env)
     end
     val
+  elsif x.first == :load
+    _, filename = x
+    code = File.read(filename.to_s)
+    evaluate(parse(code))
   else # procedure call
     exps = x.map {|exp| evaluate(exp, env)}
     proc = exps[0]
