@@ -32,10 +32,6 @@
        (sort (cdr unsorted) (cons (car unsorted) null) cmp)
        (sort (cdr unsorted) (merge (car unsorted) sorted cmp) cmp)))))
 
-  (define tree-cmp 
-    (lambda (t1 t2)
-      (> (weight t1) (weight t2))))
-
   (define pack
     (lambda (s t)
      (if (empty? s)
@@ -46,7 +42,25 @@
         (pack (cdr s) (leaf (chars t) (+ (weight t) 1)))
         (cons t (pack s null)))))))
 
+  (define tree-cmp 
+    (lambda (t1 t2)
+      (< (weight t1) (weight t2))))
+
   (define msg (quote (h e l l o _ w o r l d)))
-  (define sorted (sort msg null <))
-  (define packed (pack sorted null))
+  (define sorted-msg (sort msg null <))
+  (define packed (pack sorted-msg null))
+  (define sorted-leaves (sort packed null tree-cmp))
+
+  (define cadr (lambda (list) (car (cdr list))))
+  (define cddr (lambda (list) (cdr (cdr list))))
+
 )
+
+  (define build-tree 
+    (lambda (trees)
+      (if (eql? (length trees) 1)
+        (car trees)
+        (build-tree
+          (merge 
+            (combine (car trees) (cadr trees))
+            (cddr trees))))))
