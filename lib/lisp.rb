@@ -75,3 +75,38 @@ def evaluate(x, env = @@global_env)
     proc.call(*exps[1..-1])
   end
 end
+
+def add_globals(env)
+  %w(+ - * /).map(&:to_sym).each do |op|
+    env[op] = lambda {|*args| args.reduce(op)}
+  end
+
+  %w(< <= > >=).map(&:to_sym).each do |op|
+    env[op] = lambda {|a, b| a.send(op, b)}
+  end
+end
+
+def to_string(exp)
+  if exp.is_a?(Array)
+    '(' + exp.map do |exp|
+      to_string(exp)
+    end.join(' ') + ')'
+  else
+    exp.to_s
+  end
+end
+
+def repl
+  while true do
+    print('ruby_lisp> ')
+    begin
+      val = evaluate(parse(readline))
+    rescue Exception => e
+      exit(0) if e.is_a?(Interrupt)
+    end
+    puts to_string(val)
+    puts e
+  end
+end
+
+add_globals(@@global_env)

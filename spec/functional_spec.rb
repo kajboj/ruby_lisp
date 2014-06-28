@@ -70,4 +70,20 @@ describe 'lisp' do
     exp = [[:lambda, [:x], :x], 3]
     expect(evaluate(exp, env)).to eq(3)
   end
+
+  it 'pretty prints expressions' do
+    exp = [[:lambda, [:x], :x], 3]
+    expect(to_string(exp)).to eq('((lambda (x) x) 3)')
+  end
+
+  it 'has some default functions' do
+    expect(evaluate(parse('(+ 2 3 4)'))).to eq(9)
+    expect(evaluate(parse('(- 6 4)'))).to eq(2)
+    expect(evaluate(parse('(* 2 3 4)'))).to eq(24)
+    expect(evaluate(parse('(/ 6 2)'))).to eq(3)
+    expect(evaluate(parse('(< 3 4)'))).to eq(true)
+    expect(evaluate(parse('(<= 4 4)'))).to eq(true)
+    expect(evaluate(parse('(> 3 4)'))).to eq(false)
+    expect(evaluate(parse('(>= 4 4)'))).to eq(true)
+  end
 end
