@@ -114,13 +114,14 @@ end
 def repl
   while true do
     print('ruby_lisp> ')
+    val = nil
     begin
       val = evaluate(parse(readline))
+      puts to_string(val)
     rescue Exception => e
+      puts e
       exit(0) if e.is_a?(Interrupt)
     end
-    puts to_string(val)
-    puts e
   end
 end
 
