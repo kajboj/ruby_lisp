@@ -42,6 +42,7 @@ end
 @@global_env = Env.new([], [])
 
 def evaluate(x, env = @@global_env)
+  # puts to_string(x)
   if x.is_a?(Symbol)
     e = env.find(x)
     e ? e[x] : raise("unknown variable #{x}")
@@ -120,6 +121,7 @@ def repl
       puts to_string(val)
     rescue Exception => e
       puts e
+      puts e.backtrace
       exit(0) if e.is_a?(Interrupt)
     end
   end
