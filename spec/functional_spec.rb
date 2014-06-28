@@ -85,5 +85,16 @@ describe 'lisp' do
     expect(evaluate(parse('(<= 4 4)'))).to eq(true)
     expect(evaluate(parse('(> 3 4)'))).to eq(false)
     expect(evaluate(parse('(>= 4 4)'))).to eq(true)
+    expect(evaluate(parse('(equal? 4 4)'))).to eq(true)
+    expect(evaluate(parse('(eql? 4 4)'))).to eq(true)
+    expect(evaluate(parse('(length (quote (1 2 3)))'))).to eq(3)
+    expect(evaluate(parse('(cons 1 (quote (2 3)))'))).to eq([1, 2, 3])
+    expect(evaluate(parse('(car (quote (1 2 3)))'))).to eq(1)
+    expect(evaluate(parse('(cdr (quote (1 2 3)))'))).to eq([2, 3])
+    expect(evaluate(parse('(append (quote (1 2)) (quote (3 4)))'))).to eq([1, 2, 3, 4])
+    expect(evaluate(parse('(list 1 2 3)'))).to eq([1, 2, 3])
+    expect(evaluate(parse('(list? (list 1 2 3))'))).to eq(true)
+    expect(evaluate(parse('(symbol? (quote a))'))).to eq(true)
+    expect(evaluate(parse('(null? (list))'))).to eq(true)
   end
 end

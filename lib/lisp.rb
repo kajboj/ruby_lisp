@@ -81,9 +81,19 @@ def add_globals(env)
     env[op] = lambda {|*args| args.reduce(op)}
   end
 
-  %w(< <= > >=).map(&:to_sym).each do |op|
+  %w(< <= > >= equal? eql?).map(&:to_sym).each do |op|
     env[op] = lambda {|a, b| a.send(op, b)}
   end
+
+  env[:length] = lambda {|l| l.length}
+  env[:cons] = lambda {|x, y| [x]+y}
+  env[:car] = lambda {|x| x.first}
+  env[:cdr] = lambda {|x| x[1..-1]}
+  env[:append] = lambda {|x, y| x + y}
+  env[:list] = lambda {|*x| x}
+  env[:list?] = lambda {|x| x.is_a?(Array)}
+  env[:symbol?] = lambda {|x| x.is_a?(Symbol)}
+  env[:null?] = lambda {|x| x == []}
 end
 
 def to_string(exp)
