@@ -46,6 +46,9 @@
       true
       (if b true false))))
 
+  (define max (lambda (a b)
+    (if (>= a b) a b)))
+
   (define map (lambda (lst f)
     (if (empty? lst)
       null
@@ -55,4 +58,14 @@
     (if (empty? lst)
       acc
       (foldl (cdr lst) (f acc (car lst)) f))))
+
+  (define range (lambda (from to) 
+    (if (> from to)
+      null
+      (cons from (range (+ 1 from) to)))))
+
+  (define ^ (lambda (n m)
+    (if (eql? 0 m)
+      1
+      (* n (^ n (- m 1))))))
 )

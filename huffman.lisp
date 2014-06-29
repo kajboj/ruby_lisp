@@ -95,13 +95,12 @@
       chars)))
 
   (define render-nodes (lambda (tree width)
-    (if (leaf? tree)
-      (list (center-chars (chars tree) width))
-      (append 
-        (list (center-chars (chars tree) width))
-        (append
-          (render-nodes (left tree) (/ width 2))
-          (render-nodes (right tree) (/ width 2)))))))
+    (map (range 0 (max-depth tree))
+      (lambda (level)
+        (traverse-level tree
+          (lambda (acc chars)
+            (cons (center-chars chars (/ width (^ 2 level))) acc))
+          level null)))))
 
   (define traverse-tree (lambda (tree f depth acc)
     (if (empty? tree)
@@ -112,6 +111,19 @@
           (right tree) f (+ depth 1) 
           (f acc depth (chars tree)))))))
 
+  (define traverse-level (lambda (tree f level acc)
+    (traverse-tree tree
+      (lambda (acc1 depth chars) 
+        (if (eql? depth level)
+          (f acc1 chars)
+          acc1))
+      0 acc)))
+
+  (define max-depth (lambda (tree)
+    (traverse-tree tree
+      (lambda (acc depth chars) (max acc depth))
+      0 0)))
+
   (define msg (quote (h e l l o _ w o r l d)))
   (define sorted-msg (sort msg <))
   (define packed (pack sorted-msg))
@@ -120,10 +132,5 @@
   (define encoded-r (encode-char (quote r) coding-tree))
   (define encoded (encode msg coding-tree))
   (define decoded (decode encoded coding-tree))  
-
-  (define centered (center-chars (quote (a b c)) 50))
-  (define rendered-nodes (render-nodes coding-tree 50))
-
-  (define traversed
-    (traverse-tree coding-tree (lambda (acc depth chars) (cons depth acc)) 0 null))
+  (define rendered-nodes (render-nodes coding-tree 64))
 )
