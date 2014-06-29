@@ -106,6 +106,8 @@ def add_globals(env)
   env[:list?] = lambda {|x| x.is_a?(Array)}
   env[:symbol?] = lambda {|x| x.is_a?(Symbol)}
 
+  env[:print] = lambda {|x| to_string(x)}
+
   # functions below could as well be defined in lisp
   env[:length] = lambda {|l| l.length}
   env[:append] = lambda {|x, y| x + y}
