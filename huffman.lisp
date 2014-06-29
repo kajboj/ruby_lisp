@@ -89,6 +89,29 @@
         (build-tree (sort (pack (sort msg <)) tree-cmp)))
       (list (encode msg coding-tree) coding-tree))))
 
+  (define center-chars (lambda (chars width)
+    (if (< (length chars) (- width 1))
+      (center-chars (append (append (list (quote .)) chars) (list (quote .))) width)
+      chars)))
+
+  (define render-nodes (lambda (tree width)
+    (if (leaf? tree)
+      (list (center-chars (chars tree) width))
+      (append 
+        (list (center-chars (chars tree) width))
+        (append
+          (render-nodes (left tree) (/ width 2))
+          (render-nodes (right tree) (/ width 2)))))))
+
+  (define traverse-tree (lambda (tree f depth acc)
+    (if (empty? tree)
+      acc
+      (traverse-tree 
+        (left tree) f (+ depth 1)
+        (traverse-tree 
+          (right tree) f (+ depth 1) 
+          (f acc depth (chars tree)))))))
+
   (define msg (quote (h e l l o _ w o r l d)))
   (define sorted-msg (sort msg <))
   (define packed (pack sorted-msg))
@@ -97,4 +120,10 @@
   (define encoded-r (encode-char (quote r) coding-tree))
   (define encoded (encode msg coding-tree))
   (define decoded (decode encoded coding-tree))  
+
+  (define centered (center-chars (quote (a b c)) 50))
+  (define rendered-nodes (render-nodes coding-tree 50))
+
+  (define traversed
+    (traverse-tree coding-tree (lambda (acc depth chars) (cons depth acc)) 0 null))
 )
