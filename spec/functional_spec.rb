@@ -98,6 +98,11 @@ describe 'lisp' do
     expect(evaluate(parse('(null? (list))'))).to eq(true)
   end
 
+  it 'interprets empty list as false in if statements' do
+    expect(evaluate(parse('(if (list) 1 2)'))).to eq(2)
+  end
+
+
   it 'can load files' do
     evaluate(parse('(load spec/test.lisp)'))
     expect(evaluate(parse('(factorial 3)'))).to eq(6)

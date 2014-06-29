@@ -5,6 +5,9 @@
   (define fork (lambda (chars weight left right)
     (list chars weight left right)))
 
+  (define leaf? (lambda (tree)
+    (and (null? (left tree)) (null? (right tree)))))
+
   (define weight (lambda (tree)
     (car (cdr tree))))
 
@@ -13,6 +16,12 @@
 
   (define chars (lambda (tree)
     (car tree)))
+
+  (define left (lambda (tree)
+    (car (cdr (cdr tree)))))
+
+  (define right (lambda (tree)
+    (car (cdr (cdr (cdr tree))))))
 
   (define pack (lambda (string)
     (begin
@@ -51,9 +60,24 @@
           (cddr trees)
           tree-cmp)))))
 
+  (define encode-char (lambda (char tree)
+    (if (leaf? tree)
+      null
+      (if (contains? (chars (left tree)) char)
+        (cons 0 (encode-char char (left tree)))
+        (cons 1 (encode-char char (right tree)))))))
+
+  (define encode (lambda (str tree)
+    (foldl
+      str
+      null
+      (lambda (acc char) (append acc (encode-char char tree))))))
+
   (define msg (quote (h e l l o _ w o r l d)))
   (define sorted-msg (sort msg <))
   (define packed (pack sorted-msg))
   (define sorted-leaves (sort packed tree-cmp))
   (define coding-tree (build-tree sorted-leaves))
+  (define encoded-r (encode-char (quote r) coding-tree))
+  (define encoded (encode msg coding-tree))
 )

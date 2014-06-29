@@ -42,7 +42,8 @@ end
 @@global_env = Env.new([], [])
 
 def evaluate(x, env = @@global_env)
-  # puts to_string(x)
+  puts to_string(x) if @@debug
+
   if x.is_a?(Symbol)
     e = env.find(x)
     e ? e[x] : raise("unknown variable #{x}")
@@ -52,7 +53,8 @@ def evaluate(x, env = @@global_env)
     x.last
   elsif x.first == :if
     _, test, conseq, alt = x
-    branch = evaluate(test, env) ? conseq : alt
+    evaled_test = evaluate(test, env)
+    branch = (evaled_test && evaled_test != []) ? conseq : alt
     evaluate(branch, env)
   elsif x.first == :set!
     _, name, exp = x
@@ -91,14 +93,22 @@ def add_globals(env)
     env[op] = lambda {|a, b| a.send(op, b)}
   end
 
-  env[:length] = lambda {|l| l.length}
   env[:cons] = lambda {|x, y| [x]+y}
-  env[:car] = lambda {|x| x.first}
-  env[:cdr] = lambda {|x| x[1..-1]}
-  env[:append] = lambda {|x, y| x + y}
+  env[:car] = lambda do |x|
+    raise 'can not car empty list' if x.empty?
+    x.first
+  end
+  env[:cdr] = lambda do |x|
+    raise 'can not cdr empty list' if x.empty?
+    x[1..-1]
+  end
   env[:list] = lambda {|*x| x}
   env[:list?] = lambda {|x| x.is_a?(Array)}
   env[:symbol?] = lambda {|x| x.is_a?(Symbol)}
+
+  # functions below could as well be defined in lisp
+  env[:length] = lambda {|l| l.length}
+  env[:append] = lambda {|x, y| x + y}
   env[:null?] = lambda {|x| x == []}
 end
 
@@ -128,3 +138,5 @@ def repl
 end
 
 add_globals(@@global_env)
+
+@@debug = ARGV[0] == '-d'
