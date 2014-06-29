@@ -1,1 +1,4 @@
-(load huffman.lisp)
+(begin
+  (load utils.lisp)
+  (load huffman.lisp)
+)
