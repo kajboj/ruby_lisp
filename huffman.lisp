@@ -68,10 +68,26 @@
         (cons 1 (encode-char char (right tree)))))))
 
   (define encode (lambda (str tree)
-    (foldl
-      str
-      null
+    (foldl str null
       (lambda (acc char) (append acc (encode-char char tree))))))
+
+  (define decode (lambda (bits tree)
+    (begin
+      (define decode-char (lambda (bits subtree)
+        (if (leaf? subtree)
+          (cons (char subtree) (decode bits tree))
+          (if (eql? (car bits) 0)
+            (decode-char (cdr bits) (left subtree))
+            (decode-char (cdr bits) (right subtree))))))
+      (if (empty? bits)
+        null
+        (decode-char bits tree)))))
+
+  (define quick-encode (lambda (msg)
+    (begin
+      (set! coding-tree 
+        (build-tree (sort (pack (sort msg <)) tree-cmp)))
+      (list (encode msg coding-tree) coding-tree))))
 
   (define msg (quote (h e l l o _ w o r l d)))
   (define sorted-msg (sort msg <))
@@ -80,4 +96,5 @@
   (define coding-tree (build-tree sorted-leaves))
   (define encoded-r (encode-char (quote r) coding-tree))
   (define encoded (encode msg coding-tree))
+  (define decoded (decode encoded coding-tree))  
 )
